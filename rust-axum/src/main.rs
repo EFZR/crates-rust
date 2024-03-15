@@ -1,3 +1,4 @@
+pub mod _dev_utils;
 mod config;
 mod ctx;
 mod error;
@@ -25,6 +26,9 @@ async fn main() -> Result<()> {
         .with_target(false)
         .with_env_filter(EnvFilter::from_default_env())
         .init();
+
+    // FOR DEV ONLY
+    _dev_utils::init_dev().await;
 
     let mc: ModelController = ModelController::new().await?;
 
