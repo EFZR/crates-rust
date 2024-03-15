@@ -1,0 +1,19 @@
+# Enviorement variables for all `cargo...` commands
+[env]
+
+# Scope down tracing, to filter out external lib tracing.
+RUST_LOG="rust_axum=debug"
+
+# -- Service Enviorment Variables
+# IMPORTANT
+#   For cargo command only.
+#   For deployed env, should be managed container
+#   (e.g., Kubernetes)
+
+## -- ConfigMap
+
+# This will be relative to Cargo.toml
+# In deployed images, probably use absolute path.
+#
+
+SERVICE_WEB_FOLDER = "web-folder/"

@@ -2,7 +2,6 @@
 //! (with mock-store layer)
 
 use crate::{ctx::Ctx, Error, Result};
-use axum::{extract::State, Json};
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
 
