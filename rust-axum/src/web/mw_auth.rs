@@ -1,17 +1,16 @@
+use crate::ctx::Ctx;
+use crate::model::ModelManager;
+use crate::web::error::{Error, Result};
+use crate::web::AUTH_TOKEN;
+use async_trait::async_trait;
 use axum::body::Body;
 use axum::extract::{FromRequestParts, State};
 use axum::http::request::Parts;
 use axum::http::{Request, Response};
 use axum::middleware::Next;
-use async_trait::async_trait;
 use lazy_regex::regex_captures;
-use tower_cookies::{Cookie, Cookies};
+use tower_cookies::Cookies;
 use tracing::debug;
-
-use crate::ctx::Ctx;
-use crate::model::ModelController;
-use crate::web::AUTH_TOKEN;
-use crate::{Error, Result};
 
 pub async fn mw_require_auth(
     ctx: Result<Ctx>,
@@ -26,7 +25,7 @@ pub async fn mw_require_auth(
 }
 
 pub async fn mw_ctx_resolver(
-    _mc: State<ModelController>,
+    _mm: State<ModelManager>,
     cookies: Cookies,
     mut req: Request<Body>,
     next: Next,
@@ -40,13 +39,13 @@ pub async fn mw_ctx_resolver(
         .ok_or(Error::AuthFailNoAuthTokenCookies)
         .and_then(parse_token)
     {
-        Ok((user_id, _exp, _sign)) => Ok(Ctx::new(user_id)),
-        Err(e) => Err(e),
+        Ok((user_id, _exp, _sign)) => Ctx::new(user_id),
+        Err(e) => return Err(e),
     };
 
-    if result_ctx.is_err() && !matches!(result_ctx, Err(Error::AuthFailNoAuthTokenCookies)) {
-        cookies.remove(Cookie::from(AUTH_TOKEN));
-    }
+    // if result_ctx.is_err() && !matches!(result_ctx, Err(Error::AuthFailNoAuthTokenCookies)) {
+    //     cookies.remove(Cookie::from(AUTH_TOKEN));
+    // }
 
     // Store the ctx_result in the request extension
     req.extensions_mut().insert(result_ctx);

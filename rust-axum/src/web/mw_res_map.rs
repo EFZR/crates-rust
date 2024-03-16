@@ -1,3 +1,6 @@
+use crate::ctx::Ctx;
+use crate::log::log_request;
+use crate::web::error::Error;
 use axum::http::{Method, Uri};
 use axum::response::{IntoResponse, Response};
 use axum::Json;
@@ -5,11 +8,7 @@ use serde_json::json;
 use tracing::debug;
 use uuid::Uuid;
 
-use crate::ctx::Ctx;
-use crate::log::log_request;
-use crate::Error;
-
-pub async fn mw_res_map(
+pub async fn mw_response_map(
     ctx: Option<Ctx>,
     uri: Uri,
     req_method: Method,

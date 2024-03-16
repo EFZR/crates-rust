@@ -1,77 +1,47 @@
-//! Simplistic Model layer
-//! (with mock-store layer)
+//! Model Layer
+//!
+//! Design:
+//!
+//! - The Model Layer normalizes the application's data type
+//!   Structures and access.
+//! - All application code data access must go through the Model Layer.
+//! - The `ModelManager` holds the internal states/resources
+//!   needed by ModelControllers to access data.
+//!   (e.g, db_pool, S3 client, redis client)
+//! - Model Controllers (e.g, `TaskBmc`, `ProjectBmc`) implement
+//!   CRUD and other data access methods on the given "entity".
+//!   (e.g, `Task`, `Project`)
+//!   (`Bmc` is short for backend Model Controller).
+//! - Frameworks like Axum, Tauri, `ModelManager` are typically used as App State.
+//!   ModelManager are designed to be passed as an argument
+//!   To all Model Controllers function
 
-use crate::{ctx::Ctx, Error, Result};
-use serde::{Deserialize, Serialize};
-use std::sync::{Arc, Mutex};
+// region:          ---modules
+mod error;
+mod store;
+pub mod task;
 
-// region:      --- Tickets Types
+pub use self::error::{Error, Result};
 
-#[derive(Clone, Debug, Serialize)]
-pub struct Ticket {
-    pub id: u64,
-    pub cid: u64,
-    pub title: String,
-}
-
-#[derive(Deserialize)]
-pub struct TicketForCreate {
-    pub title: String,
-}
-
-// endregion:    --- Tickets Types
-
-// region:      --- Model Controller
+use self::store::{new_db_pool, Db};
+// endregion:       ---modules
 
 #[derive(Clone)]
-pub struct ModelController {
-    tickets_store: Arc<Mutex<Vec<Option<Ticket>>>>,
+pub struct ModelManager {
+    db: Db,
 }
 
-// Constructor
-
-impl ModelController {
+impl ModelManager {
+    /// Constructor
     pub async fn new() -> Result<Self> {
-        Ok(Self {
-            tickets_store: Arc::default(),
-        })
+        let db = new_db_pool().await?;
+
+        Ok(ModelManager { db })
+    }
+
+    /// Returns the sqlx db pool reference.
+    /// (ONLY for the model layer)
+    pub(in crate::model) fn db(&self) -> &Db {
+        &self.db
     }
 }
-
-// CRUD Implementation
-
-impl ModelController {
-    pub async fn create_ticket(&self, ctx: Ctx, ticket_fc: TicketForCreate) -> Result<Ticket> {
-        let mut store = self.tickets_store.lock().unwrap();
-
-        let id: u64 = store.len() as u64;
-
-        let ticket: Ticket = Ticket {
-            id,
-            cid: ctx.user_id(),
-            title: ticket_fc.title,
-        };
-
-        store.push(Some(ticket.clone()));
-
-        Ok(ticket)
-    }
-
-    pub async fn list_tickets(&self, _ctx: Ctx) -> Result<Vec<Ticket>> {
-        let store = self.tickets_store.lock().unwrap();
-
-        let tickets: Vec<Ticket> = store.iter().filter_map(|t| t.clone()).collect();
-
-        Ok(tickets)
-    }
-
-    pub async fn delete_ticket(&self, _ctx: Ctx, id: u64) -> Result<Ticket> {
-        let mut store = self.tickets_store.lock().unwrap();
-
-        let ticket: Option<Ticket> = store.get_mut(id as usize).and_then(|t| t.take());
-
-        ticket.ok_or(Error::TicketDeleteFailIdNotFound { id })
-    }
-}
-
-// endregion:   --- Model Controller

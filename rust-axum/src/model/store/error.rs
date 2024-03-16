@@ -1,23 +1,11 @@
-use crate::model;
 use serde::Serialize;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug, Serialize)]
 pub enum Error {
-    // -- Config
-    ConfigMissingEnv(&'static str),
-    // -- Modules
-    Model(model::Error),
+    FailToCreatePool(String),
 }
-
-// region:          ---Froms
-impl From<model::Error> for Error {
-    fn from(value: model::Error) -> Self {
-        Self::Model(value)
-    }
-}
-// endregion:       ---Froms
 
 // region:          --- Error Boilerplate
 impl core::fmt::Display for Error {

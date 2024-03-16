@@ -1,3 +1,5 @@
+#[allow(unused)]
+
 pub mod _dev_utils;
 mod config;
 mod ctx;
@@ -10,11 +12,10 @@ pub use self::error::{Error, Result};
 pub use config::config;
 
 use crate::web::mw_auth;
-use crate::web::mw_res_map::mw_res_map;
-use crate::web::{routes_login, routes_static, routes_tickets};
+use crate::web::mw_res_map::mw_response_map;
+use crate::web::{routes_login, routes_static};
 use axum::middleware;
 use axum::Router;
-use model::ModelController;
 use tower_cookies::CookieManagerLayer;
 use tracing::info;
 use tracing_subscriber::{self, EnvFilter};
@@ -30,17 +31,13 @@ async fn main() -> Result<()> {
     // FOR DEV ONLY
     _dev_utils::init_dev().await;
 
-    let mc: ModelController = ModelController::new().await?;
-
-    let routes_apis = routes_tickets::routes(mc.clone())
-        .route_layer(middleware::from_fn(mw_auth::mw_require_auth));
+    let mm = model::ModelManager::new().await?;
 
     let routes_all = Router::new()
         .merge(routes_login::routes())
-        .nest("/api", routes_apis)
-        .layer(middleware::map_response(mw_res_map))
+        .layer(middleware::map_response(mw_response_map))
         .layer(middleware::from_fn_with_state(
-            mc.clone(),
+            mm.clone(),
             mw_auth::mw_ctx_resolver,
         ))
         .layer(CookieManagerLayer::new())

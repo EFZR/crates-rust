@@ -15,12 +15,19 @@ pub fn config() -> &'static Config {
 pub struct Config {
     // -- Web
     pub WEB_FOLDER: String,
+
+    // -- Db
+    pub DB_URL: String,
 }
 
 impl Config {
     fn load_from_env() -> Result<Config> {
         Ok(Config {
+            // -- Web
             WEB_FOLDER: get_env("SERVICE_WEB_FOLDER")?,
+
+            // -- Db
+            DB_URL: get_env("SERVICE_DB_URL")?,
         })
     }
 }

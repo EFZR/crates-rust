@@ -1,4 +1,5 @@
-use crate::{ctx::Ctx, error::ClientError, Error, Result};
+use crate::web::error::{ClientError, Error};
+use crate::{ctx::Ctx, Result};
 use axum::http::{Method, Uri};
 use serde::Serialize;
 use serde_json::json;

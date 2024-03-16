@@ -4,7 +4,7 @@ use serde_json::{json, Value};
 use tower_cookies::{Cookie, Cookies};
 use tracing::debug;
 
-use crate::{Error, Result};
+use crate::web::error::{Error, Result};
 use crate::web;
 
 #[derive(Debug, Deserialize)]
