@@ -33,4 +33,4 @@ cargo watch -q -c -x test
 - Dockerize the application
 - mw_auth.rs in the web module
 - Fix the Error module in the web module
-- fifth day safe commit
+- sixth day safe commit
