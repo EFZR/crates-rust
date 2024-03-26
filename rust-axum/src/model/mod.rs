@@ -17,6 +17,7 @@
 //!   To all Model Controllers function
 
 // region:          ---modules
+mod base;
 mod error;
 mod store;
 pub mod task;

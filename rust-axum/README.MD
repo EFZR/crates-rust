@@ -7,6 +7,7 @@
 - Set configuration for the server with the `.cargo/config.toml` file for environment variables and `config.rs` file for the configuration
 - Crate a DB test with the `sqlx` crate to check the connection to the database in the `_dev_utils` module
 - Create model layer with the store in the `models` module with some unit tests
+- Create the base CRUD operations with Generics in the `base` module using the `DbBmc` struct to know the enitity to work with and the `sqlb` crate to build the queries and manipulate the fields with each query.
 
 ## Commands
 
@@ -32,5 +33,3 @@ cargo watch -q -c -x test
 
 - Dockerize the application
 - mw_auth.rs in the web module
-- Fix the Error module in the web module
-- seventh day safe commit
