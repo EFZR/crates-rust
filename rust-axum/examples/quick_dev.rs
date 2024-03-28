@@ -11,24 +11,11 @@ async fn main() -> Result<()> {
         "/api/login",
         json!({
             "username": "demo1",
-            "pwd": "welcome",
+            "pwd": "welcomeddd",
         }),
     );
 
     req_login.await?.print().await?;
-
-    let req_create_ticket = hc.do_post(
-        "/api/tickets",
-        json!({
-            "title": "Ticket AAA"
-        }),
-    );
-
-    req_create_ticket.await?.print().await?;
-
-    hc.do_get("/api/tickets").await?.print().await?;
-
-    // hc.do_delete("/api/tickets/1").await?.print().await?;
 
     Ok(())
 }

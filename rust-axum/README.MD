@@ -8,6 +8,7 @@
 - Crate a DB test with the `sqlx` crate to check the connection to the database in the `_dev_utils` module
 - Create model layer with the store in the `models` module with some unit tests
 - Create the base CRUD operations with Generics in the `base` module using the `DbBmc` struct to know the enitity to work with and the `sqlb` crate to build the queries and manipulate the fields with each query.
+- Create the user login, encryption and validation with the crates: `Hmac`, `sha2`, `base64-url`
 
 ## Commands
 
@@ -32,4 +33,3 @@ cargo watch -q -c -x test
 ## Things to fix
 
 - Dockerize the application
-- mw_auth.rs in the web module

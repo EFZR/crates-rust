@@ -28,7 +28,7 @@ async fn api_login_handler(
     cookies: Cookies,
     Json(payload): Json<LoginPayload>,
 ) -> Result<Json<Value>> {
-    debug!(" {:<12} - api_login", "HANDLER");
+    debug!("{:<12} - api_login_handler", "HANDLER");
 
     let LoginPayload {
         username,
@@ -53,9 +53,9 @@ async fn api_login_handler(
             content: pwd_clear.clone(),
         },
         &pwd,
-    )
-    .map_err(|_| Error::LoginFailPwdNotMatching { user_id });
+    ).map_err(|_| Error::LoginFailPwdNotMatching { user_id })?;
 
+    // FIXME: Implement real  auth-token generation/signature
     cookies.add(Cookie::new(web::AUTH_TOKEN, "user-1.exp.sign"));
 
     let body: Json<Value> = Json(json!({
