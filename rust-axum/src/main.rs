@@ -1,18 +1,18 @@
-#[allow(unused)]
-
-pub mod _dev_utils;
 mod config;
+mod crypt;
 mod ctx;
 mod error;
 mod log;
 mod model;
 mod web;
 
+// #[cfg(test)]
+pub mod _dev_utils;
+
 pub use self::error::{Error, Result};
 pub use config::config;
 
 use crate::web::mw_auth;
-use crate::web::mw_res_map::mw_response_map;
 use crate::web::{routes_login, routes_static};
 use axum::middleware;
 use axum::Router;
@@ -34,12 +34,12 @@ async fn main() -> Result<()> {
     let mm = model::ModelManager::new().await?;
 
     let routes_all = Router::new()
-        .merge(routes_login::routes())
-        .layer(middleware::map_response(mw_response_map))
-        .layer(middleware::from_fn_with_state(
-            mm.clone(),
-            mw_auth::mw_ctx_resolver,
-        ))
+        .merge(routes_login::routes(mm.clone()))
+        // .layer(middleware::map_response(mw_response_map))
+        // .layer(middleware::from_fn_with_state(
+        //     mm.clone(),
+        //     // mw_auth::mw_ctx_resolver,
+        // ))
         .layer(CookieManagerLayer::new())
         .fallback_service(routes_static::serve_dir());
 
