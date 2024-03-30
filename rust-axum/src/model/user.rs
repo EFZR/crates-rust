@@ -1,6 +1,6 @@
+use super::base::{self, DbBmc};
 use crate::crypt::{pwd, EncryptContent};
 use crate::ctx::Ctx;
-use crate::model::base::{self, DbBmc};
 use crate::model::ModelManager;
 use crate::model::{Error, Result};
 use serde::{Deserialize, Serialize};

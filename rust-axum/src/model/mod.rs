@@ -17,15 +17,18 @@
 //!   To all Model Controllers function
 
 // region:          ---modules
+
 mod base;
 mod error;
 mod store;
+
 pub mod task;
 pub mod user;
 
 pub use self::error::{Error, Result};
 
 use self::store::{new_db_pool, Db};
+
 // endregion:       ---modules
 
 #[derive(Clone)]

@@ -1,3 +1,4 @@
+use crate::crypt;
 use crate::model;
 use crate::web;
 use axum::http::StatusCode;
@@ -21,17 +22,27 @@ pub enum Error {
 
     // Modules
     Model(model::Error),
+    Crypt(crypt::Error),
 }
 
 // region:       --- Froms
+
 impl From<model::Error> for Error {
     fn from(value: model::Error) -> Self {
         Self::Model(value)
     }
 }
+
+impl From<crypt::Error> for Error {
+    fn from(value: crypt::Error) -> Self {
+        Self::Crypt(value)
+    }
+}
+
 // endregion:    --- Froms
 
 // region:    --- Axum IntoResponse
+
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
         debug!("{:<12} - model::Error {self:?}", "INTO_RES");
@@ -45,9 +56,11 @@ impl IntoResponse for Error {
         response
     }
 }
+
 // endregion: --- Axum IntoResponse
 
 // region:    --- Error Boilerplate
+
 impl core::fmt::Display for Error {
     fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::result::Result<(), core::fmt::Error> {
         write!(fmt, "{self:?}")
@@ -55,6 +68,7 @@ impl core::fmt::Display for Error {
 }
 
 impl std::error::Error for Error {}
+
 // endregion: --- Error Boilerplate
 
 // region:    --- Client Error

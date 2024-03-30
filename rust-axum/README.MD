@@ -9,6 +9,7 @@
 - Create model layer with the store in the `models` module with some unit tests
 - Create the base CRUD operations with Generics in the `base` module using the `DbBmc` struct to know the enitity to work with and the `sqlb` crate to build the queries and manipulate the fields with each query.
 - Create the user login, encryption and validation with the crates: `Hmac`, `sha2`, `base64-url`
+- Create the token generation and validation with the `base64-url` and `time` crates, being able to store an identifier, expiration time and a signature and also adding the the token into the response header.
 
 ## Commands
 
@@ -28,6 +29,12 @@ to run tests
 
 ```shell
 cargo watch -q -c -x test
+```
+
+to generate a key of base64-url
+
+```shell
+cargo run --example gen_key
 ```
 
 ## Things to fix

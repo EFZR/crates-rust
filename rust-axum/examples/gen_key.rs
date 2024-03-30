@@ -7,7 +7,7 @@ fn main() -> Result<()> {
     println!("\nGenerated Key for HMAC:\n{key:?}");
 
     let b64u = base64_url::encode(&key);
-    println!("\nKye b64u encoded:\n{b64u}");
+    println!("\nKey b64u encoded:\n{b64u}");
 
     Ok(())
 }
