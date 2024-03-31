@@ -10,6 +10,7 @@
 - Create the base CRUD operations with Generics in the `base` module using the `DbBmc` struct to know the enitity to work with and the `sqlb` crate to build the queries and manipulate the fields with each query.
 - Create the user login, encryption and validation with the crates: `Hmac`, `sha2`, `base64-url`
 - Create the token generation and validation with the `base64-url` and `time` crates, being able to store an identifier, expiration time and a signature and also adding the the token into the response header.
+- Create the routes to the server to manipulte the *task* entity using the api architecture of **json rpc** with the `axum` and `serde_json` crates in the `rpc` module and the `rpc_task` module to handle the requests.
 
 ## Commands
 

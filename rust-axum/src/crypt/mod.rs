@@ -36,6 +36,7 @@ pub fn encrypt_into_b64u(key: &[u8], enc_content: &EncryptContent) -> Result<Str
 }
 
 // region:          --- unit test
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -65,4 +66,5 @@ mod tests {
         Ok(())
     }
 }
+
 // endregion:       --- unit test
