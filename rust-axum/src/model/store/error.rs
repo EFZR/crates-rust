@@ -8,6 +8,7 @@ pub enum Error {
 }
 
 // region:          --- Error Boilerplate
+
 impl core::fmt::Display for Error {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> core::result::Result<(), core::fmt::Error> {
         write!(fmt, "{self:?}")
@@ -15,4 +16,5 @@ impl core::fmt::Display for Error {
 }
 
 impl std::error::Error for Error {}
+
 // endregion:       --- Error Boilerplate

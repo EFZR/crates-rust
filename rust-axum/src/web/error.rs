@@ -3,57 +3,50 @@ use crate::model;
 use crate::web;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
+use derive_more::From;
 use serde::Serialize;
+use serde_with::{serde_as, DisplayFromStr};
 use std::sync::Arc;
 use tracing::debug;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(Debug, Serialize, strum_macros::AsRefStr)]
+#[serde_as]
+#[derive(Debug, Serialize, strum_macros::AsRefStr, From)]
 #[serde(tag = "type", content = "data")]
 pub enum Error {
     // -- RPC
     RpcMethodUnknown(String),
-    RpcMissingParams { rpc_method: String },
-    RpcFailJsonParams { rpc_method: String },
+    RpcMissingParams {
+        rpc_method: String,
+    },
+    RpcFailJsonParams {
+        rpc_method: String,
+    },
 
     // -- Login
     LoginFailUsernameNotFound,
-    LoginFailUserHasNoPwd { user_id: i64 },
-    LoginFailPwdNotMatching { user_id: i64 },
+    LoginFailUserHasNoPwd {
+        user_id: i64,
+    },
+    LoginFailPwdNotMatching {
+        user_id: i64,
+    },
 
     // -- CtxExtError
+    #[from]
     CtxExt(web::mw_auth::CtxExtError),
 
     // -- Modules
+    #[from]
     Model(model::Error),
+    #[from]
     Crypt(crypt::Error),
 
     // -- External Modules
-    SerdeJson(String),
+    #[from]
+    SerdeJson(#[serde_as(as = "DisplayFromStr")] serde_json::Error),
 }
-
-// region:       --- Froms
-
-impl From<model::Error> for Error {
-    fn from(value: model::Error) -> Self {
-        Self::Model(value)
-    }
-}
-
-impl From<crypt::Error> for Error {
-    fn from(value: crypt::Error) -> Self {
-        Self::Crypt(value)
-    }
-}
-
-impl From<serde_json::Error> for Error {
-    fn from(value: serde_json::Error) -> Self {
-        Self::SerdeJson(value.to_string())
-    }
-}
-
-// endregion:    --- Froms
 
 // region:    --- Axum IntoResponse
 
@@ -126,4 +119,5 @@ pub enum ClientError {
     ENTITY_NOT_FOUND { entity: &'static str, id: i64 },
     SERVICE_ERROR,
 }
+
 // endregion: --- Client Error
