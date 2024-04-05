@@ -51,6 +51,7 @@ In this episode, we accomplished the following tasks:
 In this episode, we accomplished the following task:
 
 - *Database Query Improvement*: We transitioned from using `sqlx`/`sqlb` to `sea-query`/`modql`. This change was made to enhance our capabilities in building, manipulating, and filtering database queries.
+- *Modql & filters*: Using the `modql` crate, we were able to make a filter using certain `modql` operators in the JSON client request. This allows us to filter the results by using the `ListOptions` and `FilterGroups` types of `modql`.
 
 ## Deployment
 
