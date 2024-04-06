@@ -1,5 +1,6 @@
 // region:      --- Modules
 
+mod params;
 mod task_rpc;
 
 use crate::ctx::Ctx;
@@ -18,7 +19,7 @@ use tracing::debug;
 
 // region:      --- RPC Types
 
-/// JSON-RPC Request Body.
+/// The raw JSON-RPC request object, serving as the foundation for RPC routing.
 #[derive(Deserialize)]
 struct RpcRequest {
     id: Option<Value>,
@@ -26,20 +27,11 @@ struct RpcRequest {
     params: Option<Value>,
 }
 
-#[derive(Deserialize)]
-pub struct ParamsForCreate<D> {
-    data: D,
-}
-
-#[derive(Deserialize)]
-pub struct ParamsForUpdate<D> {
-    id: i64,
-    data: D,
-}
-
-#[derive(Deserialize)]
-pub struct ParamsIded {
-    id: i64,
+/// RPC basic information holding the id and method for further logging.
+#[derive(Debug, Clone)]
+pub struct RpcInfo {
+    pub id: Option<Value>,
+    pub method: String,
 }
 
 // endregion:   --- RPC Types
@@ -48,13 +40,6 @@ pub fn routes(mm: ModelManager) -> Router {
     Router::new()
         .route("/rpc", post(rpc_handler))
         .with_state(mm)
-}
-
-/// RPC basic information holding the id and method for further logging.
-#[derive(Debug, Clone)]
-pub struct RpcInfo {
-    pub id: Option<Value>,
-    pub method: String,
 }
 
 macro_rules! exec_rpc_fn {
@@ -108,7 +93,7 @@ async fn _rpc_handler(mm: ModelManager, ctx: Ctx, rpc_req: RpcRequest) -> Result
 
     let result_json: Value = match rpc_method.as_str() {
         // -- Task RPC methods.
-        "list_tasks" => exec_rpc_fn!(list_tasks, ctx, mm),
+        "list_tasks" => exec_rpc_fn!(list_tasks, ctx, mm, rpc_params),
         "create_task" => exec_rpc_fn!(crate_task, ctx, mm, rpc_params),
         "update_task" => exec_rpc_fn!(update_task, ctx, mm, rpc_params),
         "delete_task" => exec_rpc_fn!(delete_task, ctx, mm, rpc_params),
